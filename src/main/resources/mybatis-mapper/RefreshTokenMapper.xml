@@ -1,0 +1,24 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+
+<!--<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"-->
+<!--        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+
+<!--<mapper namespace="com.example.test.api.repository.RefreshTokenMapper">-->
+<!--    <select id="selectRefreshTokenById" resultType="RefreshToken">-->
+<!--        SELECT id,-->
+<!--               refreshToken-->
+<!--          FROM RefreshToken-->
+<!--         WHERE id = #{id}-->
+<!--    </select>-->
+
+<!--    <insert id="save" >-->
+<!--        insert into RefreshToken(id, refreshToken)-->
+<!--        values (#{id}, #{refreshToken});-->
+<!--    </insert>-->
+
+<!--    <update id="update">-->
+<!--        update RefreshToken-->
+<!--           set refreshToken = #{refreshToken}-->
+<!--         where id = #{id}-->
+<!--    </update>-->
+<!--</mapper>-->
