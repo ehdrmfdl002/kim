@@ -15,7 +15,7 @@ public class TestController {
     private final UserService userService;
 
     @GetMapping("/test")
-    public ResponseEntity test(@RequestHeader("Authorization") String token) throws Exception {
-        return userService.test(token);
+    public ResponseEntity test() throws Exception {
+        return userService.test();
     }
 }

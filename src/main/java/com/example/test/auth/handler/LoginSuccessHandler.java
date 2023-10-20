@@ -3,6 +3,7 @@ package com.example.test.auth.handler;
 import com.example.test.api.entity.RefreshToken;
 import com.example.test.api.repository.RefreshTokenMapper;
 import com.example.test.api.repository.UserMapper;
+import com.example.test.auth.utils.SecurityUtil;
 import com.example.test.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) {
         try {
-            String id = extractUsername(authentication); // 인증 정보에서 Username(id) 추출
+            String id = SecurityUtil.extractUsername(authentication); // 인증 정보에서 Username(id) 추출
             System.out.println("Eid : " + id);
 
             String accessToken = jwtService.createAccessToken(id); // JwtService의 createAccessToken을 사용하여 AccessToken 발급
@@ -47,7 +48,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             jwtService.sendAccessToken(response, accessToken);
 
             // TODO : 로그인 성공 시 리다이렉트 시키는 URL 변경
-            String redirectUrl = "http://localhost:8080/main?token=" + accessToken;
+            String redirectUrl = "http://localhost:3000/main?token=" + accessToken;
             response.sendRedirect(redirectUrl);
 
             log.info("로그인에 성공하였습니다. 아이디 : {}", id);
@@ -59,8 +60,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     }
 
-    private String extractUsername(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userDetails.getUsername();
-    }
+//    private String extractUsername(Authentication authentication) {
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        return userDetails.getUsername();
+//    }
 }

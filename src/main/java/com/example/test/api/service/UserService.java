@@ -5,12 +5,12 @@ import com.example.test.api.entity.RefreshToken;
 import com.example.test.api.entity.User;
 import com.example.test.api.repository.RefreshTokenMapper;
 import com.example.test.api.repository.UserMapper;
+import com.example.test.auth.utils.SecurityUtil;
 import com.example.test.jwt.service.JwtService;
 import com.example.test.utils.error.CustomException;
 import com.example.test.utils.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,8 +55,8 @@ public class UserService {
         throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    public ResponseEntity test(String token) {
-        String id = jwtService.getUserIdFromToken(token);
+    public ResponseEntity test() {
+        String id = SecurityUtil.extractUsername();
         Optional<RefreshToken> currentRefreshToken = refreshTokenMapper.selectRefreshTokenById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
