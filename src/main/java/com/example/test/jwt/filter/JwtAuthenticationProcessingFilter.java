@@ -47,7 +47,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final UserMapper userMapper;
     private final RefreshTokenMapper refreshTokenMapper;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
-    private static final String[] NO_CHECK_URLS = {"/swagger-ui", "/api/login", "/login"};
+    private static final String[] NO_CHECK_URLS = {"/auth", "/login"};
     @Value("${jwt.access.header}")
     private String accessHeader;
 
@@ -91,9 +91,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         } catch (CustomException e) {
             ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
             response.setStatus(errorResponse.getStatus());
-            response.getWriter().write(errorResponse.getError().toString());
-            response.getWriter().write(errorResponse.getCode().toString());
-            response.getWriter().write(errorResponse.getMessage().toString());
+            response.setContentType("application/json;charset=UTF-8"); // JSON 응답 설정
+            String jsonResponse = "{\n" +
+                    "  \"status\": " + errorResponse.getStatus() + ",\n" +
+                    "  \"code\": \"" + errorResponse.getCode() + "\",\n" +
+                    "  \"message\": \"" + errorResponse.getMessage() + "\"\n" +
+                    "}";
+            response.getWriter().write(jsonResponse);
         }
     }
 

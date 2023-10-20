@@ -35,7 +35,7 @@ public class UserService {
         Optional<User> user = userMapper.selectUserById(id);
         System.out.println(user.get());
 
-        if (user.isPresent() && user.get().getPassword().equals(givenPassword)) {
+        if (user.isPresent() && passwordEncoder.matches(user.get().getPassword(), givenPassword)) {
             User userData = user.get();
             String accessToken = jwtService.createAccessToken(id);
             String refreshToken = jwtService.createRefreshToken();
@@ -60,7 +60,17 @@ public class UserService {
         Optional<RefreshToken> currentRefreshToken = refreshTokenMapper.selectRefreshTokenById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(currentRefreshToken);
+                .body(currentRefreshToken.get());
+    }
+
+    public ResponseEntity sign(UserLoginReq userLoginReq) {
+        String role = "USER";
+        String id = userLoginReq.getId();
+        String password = passwordEncoder.encode(userLoginReq.getPassword());
+        userMapper.save(id, password, role);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(role);
     }
 
 }

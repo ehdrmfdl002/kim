@@ -86,25 +86,18 @@ public class JwtService {
      */
     public String getUserIdFromToken(String token) {
         Optional<String> newToken = Optional.ofNullable(token)
-                .map(accessToken -> {
-                    try {
-                        return URLDecoder.decode(accessToken, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                .filter(refreshToken -> refreshToken.startsWith(BEARER))
+                .map(refreshToken -> refreshToken.replace(BEARER, ""));
 
-        if (newToken.isPresent()) {
-            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(newToken.get());
+        log.info("내 토큰 = {}", newToken.get());
 
-            String userId = decodedJWT.getClaim(ID_CLAIM).asString();  // ID_CLAIM 이름의 클레임에서 문자열 값을 추출하여 변수에 저장
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
+                .build()
+                .verify(newToken.get());
 
-            return userId;
-        } else {
-            throw new IllegalArgumentException("검증되지 않는 토큰");
-        }
+        String id = decodedJWT.getClaim(ID_CLAIM).asString();  // ID_CLAIM 이름의 클레임에서 문자열 값을 추출하여 변수에 저장
+
+        return id;
     }
 
     /**

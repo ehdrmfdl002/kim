@@ -22,8 +22,8 @@ public class UserController {
         return userService.normalLogin(response, userLoginReq);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity test(@RequestHeader("Authorization") String token) throws Exception {
-        return userService.test(token);
+    @PostMapping("/sign")
+    public ResponseEntity sign(@RequestBody UserLoginReq userLoginReq) throws Exception {
+        return userService.sign(userLoginReq);
     }
 }
