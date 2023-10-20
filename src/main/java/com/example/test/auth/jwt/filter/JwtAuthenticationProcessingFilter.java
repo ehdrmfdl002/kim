@@ -1,10 +1,10 @@
-package com.example.test.jwt.filter;
+package com.example.test.auth.jwt.filter;
 
 import com.example.test.api.entity.RefreshToken;
 import com.example.test.api.entity.User;
 import com.example.test.api.repository.RefreshTokenMapper;
 import com.example.test.api.repository.UserMapper;
-import com.example.test.jwt.service.JwtService;
+import com.example.test.auth.jwt.service.JwtService;
 import com.example.test.utils.PasswordUtil;
 import com.example.test.utils.error.CustomException;
 import com.example.test.utils.error.ErrorCode;
@@ -98,6 +98,16 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     "  \"message\": \"" + errorResponse.getMessage() + "\"\n" +
                     "}";
             response.getWriter().write(jsonResponse);
+        } catch (Exception e){
+            ErrorResponse errorResponse = new ErrorResponse(ErrorCode.FORBIDDEN);
+            response.setStatus(errorResponse.getStatus());
+            response.setContentType("application/json;charset=UTF-8"); // JSON 응답 설정
+            String jsonResponse = "{\n" +
+                    "  \"status\": " + errorResponse.getStatus() + ",\n" +
+                    "  \"code\": \"" + errorResponse.getCode() + "\",\n" +
+                    "  \"message\": \"" + e.getMessage() + "\"\n" +
+                    "}";
+            response.getWriter().write(jsonResponse);
         }
     }
 
@@ -128,10 +138,17 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      */
     private String reIssueRefreshToken(User user) {
         String reIssuedRefreshToken = jwtService.createRefreshToken();
-        Optional<RefreshToken> refreshToken = refreshTokenMapper.selectRefreshTokenById(user.getId());
-        RefreshToken newRefreshToken = refreshToken.orElseThrow(() -> new IllegalStateException("DB에 refresh 토큰 없음"));
-        refreshTokenMapper.update(user.getId(), reIssuedRefreshToken);
-
+        refreshTokenMapper.selectRefreshTokenById(user.getId())
+                .ifPresentOrElse(
+                        refreshToken -> {
+                            // Refreshtoken 존재 시 업데이트
+                            refreshTokenMapper.update(user.getId(), reIssuedRefreshToken);
+                        },
+                        () -> {
+                            // Refreshtoken 없으면 새로 발급
+                            refreshTokenMapper.save(user.getId(), reIssuedRefreshToken);
+                        }
+                );
         return reIssuedRefreshToken;
     }
 

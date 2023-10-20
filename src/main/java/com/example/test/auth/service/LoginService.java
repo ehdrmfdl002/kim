@@ -18,9 +18,7 @@ public class LoginService implements UserDetailsService {
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         User user = userMapper.selectUserById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 아이디가 존재하지 않습니다."));
-        System.out.println(user.getId());
-        System.out.println(user.getPassword());
-        System.out.println(user.getRole());
+
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getId())
                 .password(user.getPassword())

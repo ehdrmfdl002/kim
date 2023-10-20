@@ -10,6 +10,5 @@ import lombok.*;
 @AllArgsConstructor
 public class RefreshToken {
     private String id;
-
     private String refreshToken;
 }

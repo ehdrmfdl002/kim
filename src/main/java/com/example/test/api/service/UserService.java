@@ -6,7 +6,7 @@ import com.example.test.api.entity.User;
 import com.example.test.api.repository.RefreshTokenMapper;
 import com.example.test.api.repository.UserMapper;
 import com.example.test.auth.utils.SecurityUtil;
-import com.example.test.jwt.service.JwtService;
+import com.example.test.auth.jwt.service.JwtService;
 import com.example.test.utils.error.CustomException;
 import com.example.test.utils.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -31,19 +31,18 @@ public class UserService {
     public ResponseEntity normalLogin(HttpServletResponse response, UserLoginReq userLoginReq) {
         String id = userLoginReq.getId();
         String givenPassword = userLoginReq.getPassword();
-        System.out.println("id : " + id + " pw : " + givenPassword);
         Optional<User> user = userMapper.selectUserById(id);
-        System.out.println(user.get());
 
         if (user.isPresent() && passwordEncoder.matches(user.get().getPassword(), givenPassword)) {
             User userData = user.get();
             String accessToken = jwtService.createAccessToken(id);
             String refreshToken = jwtService.createRefreshToken();
             Optional<RefreshToken> currentRefreshToken = refreshTokenMapper.selectRefreshTokenById(userData.getId());
+
             if (currentRefreshToken.isPresent()) {
                 RefreshToken newRefreshToken = currentRefreshToken.get();
                 newRefreshToken.setRefreshToken(refreshToken);
-                refreshTokenMapper.save(id, newRefreshToken.getRefreshToken());
+                refreshTokenMapper.update(id, newRefreshToken.getRefreshToken());
             } else {
                 refreshTokenMapper.save(id, refreshToken);
             }

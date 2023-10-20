@@ -2,14 +2,12 @@ package com.example.test.auth.handler;
 
 import com.example.test.api.entity.RefreshToken;
 import com.example.test.api.repository.RefreshTokenMapper;
-import com.example.test.api.repository.UserMapper;
 import com.example.test.auth.utils.SecurityUtil;
-import com.example.test.jwt.service.JwtService;
+import com.example.test.auth.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,9 +57,4 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         }
 
     }
-
-//    private String extractUsername(Authentication authentication) {
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        return userDetails.getUsername();
-//    }
 }

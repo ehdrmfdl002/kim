@@ -1,4 +1,4 @@
-package com.example.test.jwt.service;
+package com.example.test.auth.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,12 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -79,27 +75,6 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-
-    /**
-     * REST API에서 사용
-     * AccessToken 에서 id 추출
-     */
-    public String getUserIdFromToken(String token) {
-        Optional<String> newToken = Optional.ofNullable(token)
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
-
-        log.info("내 토큰 = {}", newToken.get());
-
-        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
-                .build()
-                .verify(newToken.get());
-
-        String id = decodedJWT.getClaim(ID_CLAIM).asString();  // ID_CLAIM 이름의 클레임에서 문자열 값을 추출하여 변수에 저장
-
-        return id;
-    }
-
     /**
      * Filter에서 사용
      * AccessToken에서 id 추출
@@ -155,24 +130,9 @@ public class JwtService {
                 .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-
-    /**
-     * RefreshToken DB 저장(업데이트)
-     */
-//    @Transactional
-//    public void updateRefreshToken(String userId, String refreshToken) {
-//        refreshTokenRepository.findByUserId(userId)
-//                .ifPresentOrElse(
-//                        token -> token.setRefreshToken(refreshToken),
-//                        () -> new Exception("일치하는 회원이 없습니다.")
-//                );
-//    }
-
     /**
      * 토큰 유효성 검증
      */
-
-    // TODO: UserController에 있는 validate에 있는 로직이랑 대비시켜서 합칠 필요가 있다고 생각됨.
     public boolean isTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);

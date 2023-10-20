@@ -69,7 +69,6 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
         String id = usernamePasswordMap.get(USERNAME_KEY);
         String password = usernamePasswordMap.get(PASSWORD_KEY);
 
-        System.out.println("Jid : " + id + " Jpw : " + password);
 
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(id, password);//principal 과 credentials 전달
 
